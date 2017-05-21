@@ -12,16 +12,35 @@
 			}
 		}
 
+		class World {
+			constructor(w_ancho, w_alto) {
+				this.w_width = w_ancho;
+				this.w_height = w_alto;
+			}
+
+			getWorldWidth() {
+				return this.w_width;
+			}
+
+			getWorldHeight() {
+				return this.w_height;
+			}
+		}
+
 		class Food {
 			constructor(x, y) {
 				this.x = x;
 				this.y = y;
 				this.width = 10;
 				this.height = 10;
+				this.world;
+
 			}
 
-			static generate() {
-				return new Food( Random.get(0, 500), Random.get(0, 300) );
+			static generate(world) {
+				this.world = world;
+				console.log(this.world.getWorldWidth());
+				return new Food( Random.get( 0, this.world.getWorldWidth() ), Random.get( 0, this.world.getWorldHeight() ) );
 			}
 
 			draw() {
@@ -30,12 +49,14 @@
 		}
 
 		class Square {
-			constructor(x, y) {
+			constructor(x, y, s_dimension, world) {
 				this.x = x;
 				this.y = y;
-				this.width = 10;
-				this.height = 10;
+				this.width = s_dimension;
+				this.height = s_dimension;
 				this.back = null; // cuadro de atras
+				this.world = world;
+				this.direction;
 			}
 
 			draw() {
@@ -47,7 +68,7 @@
 
 			add() {
 				if( this.hasBack() ) return this.back.add();
-				this.back = new Square(this.x, this.y);
+				this.back = new Square(this.x, this.y, 10, this.world);
 			}
 
 			hasBack() {
@@ -60,6 +81,8 @@
 					this.back.copy();
 					this.back.x = this.x;
 					this.back.y = this.y;
+
+					this.crossBorder();
 				}
 			}
 
@@ -87,38 +110,56 @@
 				return squareStrike(this, head);
 			}
 
-			strikeBorder() {
-				return this.x > 490 || this.x < 0 || this.y > 290 || this.y < 0;
+			crossBorder() {
+				// traspasar
+				if( this.direction == "right" && this.x > (this.world.getWorldWidth() - this.width) ) {
+					this.x = this.width - (this.width * 2);
+				
+				} else if( this.direction == "left" &&  this.x < 0 ) {
+					this.x = this.world.getWorldWidth() + this.width;
+				
+				} else if( this.direction == "down" && this.y > (this.world.getWorldHeight() - this.height) ) {
+					this.y = this.height - (this.height * 2);
+				
+				} else if( this.direction == "up" &&  this.y < 0 ) {
+					this.y = this.world.getWorldHeight() + this.height;
+				
+				}
 			}
 
 			// 38
 			up() {
 				this.copy();
 				this.y -= 10;
+				this.direction = "up";
 			}
 
 			// 40
 			down() {
 				this.copy();
 				this.y += 10;
+				this.direction = "down";
 			}
 
 			// 37
 			left() {
 				this.copy();
 				this.x -= 10;
+				this.direction = "left";
 			}
 
 			// 39
 			right() {
 				this.copy();
 				this.x += 10;
+				this.direction = "right";
 			}
 		}
 
 		class Snake {
-			constructor() {
-				this.head = new Square(100, 0);
+			constructor(world) {
+				this.world = world
+				this.head = new Square(100, 0, 10, world);
 				this.draw();
 				this.direction = "right";
 				this.head.add();
@@ -133,7 +174,7 @@
 			}
 
 			dead() {
-				return this.head.strike(this.head) || this.head.strikeBorder();
+				return this.head.strike(this.head); // || this.head.strikeBorder();
 			}
 
 			// 38
@@ -181,7 +222,8 @@
 			}
 		}
 
-		const snake = new Snake();
+		const world = new World(500, 300);
+		const snake = new Snake(world);
 		let foods = [];
 		var pause = false;
 
@@ -222,11 +264,11 @@
 					window.clearInterval(animacion);
 				}
 			}
-		}, 1000 / 30  );
+		}, 1000 / 5  );
 
 		setInterval(function() {
 			if(!pause) {
-				const food = Food.generate();
+				const food = Food.generate(world);
 				foods.push(food);
 
 				setTimeout(function() {
