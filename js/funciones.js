@@ -3,6 +3,7 @@
 	
 	if(lienzo.getContext) {
 		const context = lienzo.getContext("2d");
+		lienzo.style.background = "#61993B";
 
 		class Random {
 			static get(inicio, final) {
@@ -39,7 +40,6 @@
 
 			static generate(world) {
 				this.world = world;
-				console.log(this.world.getWorldWidth());
 				return new Food( Random.get( 0, this.world.getWorldWidth() ), Random.get( 0, this.world.getWorldHeight() ) );
 			}
 
