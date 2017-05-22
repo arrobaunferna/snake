@@ -309,7 +309,7 @@
 				drawFood();
 
 				if(snake.dead()) {
-					world.setScreen("Perdiste!!!");
+					world.setScreen("Game Over");
 					window.clearInterval(animacion);
 				}
 			}
