@@ -1,7 +1,23 @@
+@font-face {
+	font-family: "pricedown";
+	src: url("../fonts/pricedown/Fonts/pricedown_bl.otf");
+	font-size: 16px;
+}
+
 body {
-	text-align: center;
+	background: #294218;
 }
 
 #cnvLienzo {
-	border: solid;
+	border: 3px solid black;
+}
+
+.center {
+	text-align: center;
+}
+
+.titulo {
+	text-shadow: 0 0 10px #ccc;
+	font-family: "pricedown";
+	font-size: 4em;
 }

@@ -26,6 +26,13 @@
 			getWorldHeight() {
 				return this.w_height;
 			}
+
+			setScreen(screen) {
+				context.fillStyle = "#000";
+				context.textAlign = "center";
+				context.font = "2em pricedown";
+				context.fillText(screen, this.w_width / 2, this.w_height / 2);
+			}
 		}
 
 		class Food {
@@ -35,7 +42,12 @@
 				this.width = 10;
 				this.height = 10;
 				this.world;
+				this.color;
 
+			}
+
+			setColor(color) {
+				this.color = color;
 			}
 
 			static generate(world) {
@@ -44,6 +56,7 @@
 			}
 
 			draw() {
+				context.fillStyle = this.color;
 				context.fillRect(this.x, this.y, this.width, this.height);
 			}
 		}
@@ -57,9 +70,15 @@
 				this.back = null; // cuadro de atras
 				this.world = world;
 				this.direction;
+				this.color;
+			}
+
+			setColor(color) {
+				this.color = color;
 			}
 
 			draw() {
+				context.fillStyle = this.color;
 				context.fillRect(this.x, this.y, this.width, this.height);
 				if( this.hasBack() ) {
 					this.back.draw(); 
@@ -69,6 +88,7 @@
 			add() {
 				if( this.hasBack() ) return this.back.add();
 				this.back = new Square(this.x, this.y, 10, this.world);
+				this.back.setColor( this.color );
 			}
 
 			hasBack() {
@@ -165,6 +185,10 @@
 				this.head.add();
 			}
 
+			setColor(color) {
+				this.head.setColor( color );
+			}
+
 			draw() {
 				this.head.draw();
 			}
@@ -227,8 +251,31 @@
 		let foods = [];
 		var pause = false;
 
+		var colores = {
+			pj: "#000",
+			food: "#F00"
+		};
+
+		var cboLevelGame = document.querySelector("#cboLevelGame");
+		var level_game = cboLevelGame.value;
+
+		// Colores personaje
+		var spinColorRojo = document.querySelector("#spinColorRojo");
+		var spinColorVerde = document.querySelector("#spinColorVerde");
+		var spinColorAzul = document.querySelector("#spinColorAzul");
+
+		// Colores comida
+		var spnColorFoodRed = document.querySelector("#spnColorFoodRed");
+		var spnColorFoodGreen = document.querySelector("#spnColorFoodGreen");
+		var spnColorFoodBlue = document.querySelector("#spnColorFoodBlue");
+
 		window.addEventListener("keydown", function(e) {
-			switch(e.keyCode) {
+			var tecla = e.keyCode || e.which;
+			if(tecla > 36 && tecla < 41 || tecla == 80) {
+				e.preventDefault();
+			}
+
+			switch(tecla) {
 				case 37:
 					return snake.left();
 				break;
@@ -246,29 +293,34 @@
 				break;
 
 				case 80:
+					world.setScreen("Pause");
 					pause = !pause;
 				break;
 			}
 		}, false);
 
-		const animacion = setInterval(function() {
+		function gameRun() {
 			if(!pause) {
 				snake.move();
 				context.clearRect(0, 0, lienzo.width, lienzo.height );
+				snake.setColor(colores.pj);
 				snake.draw();
 
 				drawFood();
 
 				if(snake.dead()) {
-					console.log("Perdiste!!!");
+					world.setScreen("Perdiste!!!");
 					window.clearInterval(animacion);
 				}
 			}
-		}, 1000 / 5  );
+		}
+
+		var animacion = setInterval(gameRun, 1000 / level_game  );
 
 		setInterval(function() {
 			if(!pause) {
 				const food = Food.generate(world);
+				food.setColor(colores.food);
 				foods.push(food);
 
 				setTimeout(function() {
@@ -328,5 +380,37 @@
 
 			return strike;
 		}
+
+		function changeColor() {
+			// Personaje
+			var Rojo_pj = spinColorRojo.value;
+			var Verde_pj = spinColorVerde.value;
+			var Azul_pj = spinColorAzul.value;
+
+			colores.pj = "rgb("+ Rojo_pj +", "+ Verde_pj +", "+ Azul_pj +")";
+			
+			// Comida
+			var Rojo_food =  spnColorFoodRed.value;
+			var Verde_food =  spnColorFoodGreen.value;
+			var Azul_food =  spnColorFoodBlue.value;
+
+			colores.food = "rgb("+ Rojo_food +", "+ Verde_food +", "+ Azul_food +")";
+		}
+
+		spinColorRojo.addEventListener("change", changeColor, false);
+		spinColorVerde.addEventListener("change", changeColor, false);
+		spinColorAzul.addEventListener("change", changeColor, false);
+
+		spnColorFoodRed.addEventListener("change", changeColor, false);
+		spnColorFoodGreen.addEventListener("change", changeColor, false);
+		spnColorFoodBlue.addEventListener("change", changeColor, false);
+
+		cboLevelGame.addEventListener("change", function(e) {
+			window.clearInterval(animacion);
+			level_game = parseInt(this.value);
+
+			this.blur();
+			animacion = setInterval(gameRun, 1000  / level_game);
+		}, false);
 	}
 }();

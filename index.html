@@ -6,6 +6,74 @@
 	<link rel="stylesheet" type="text/css" href="css/estilos.css">
 </head>
 <body>
+	<header>
+		<h1 class="center titulo">Snake Game</h1>
+	</header>
+
+	<div class="container">
+		<div class="config">
+			<div class="config-heading">
+				<h3 class="center">Configuraciones</h3>
+			</div>
+
+			<div class="config-body">
+				<ul class="list-config">
+					<li>
+						Color personaje:
+						<div class="choose-color">
+							<label for="spinColorRojo">Rojo:</label><br />
+							<input type="range" name="spinColorRojo" id="spinColorRojo" value="0" min="0" max="255" step="1" />
+							<br />
+
+							<label for="spinColorVerde">Verde:</label><br />
+							<input type="range" name="spinColorVerde" id="spinColorVerde" value="0" min="0" max="255" step="1" />
+							<br />
+
+							<label for="spinColorAzul">Azul:</label><br />
+							<input type="range" name="spinColorAzul" id="spinColorAzul" value="0" min="0" max="255" step="1" />
+						</div>
+					</li>
+
+					<li>
+						Color comida:
+						<div class="choose-color">
+							<label for="spnColorFoodRed">Rojo:</label><br />
+							<input type="range" name="spnColorFoodRed" id="spnColorFoodRed" value="255" min="0" max="255" step="1" />
+							<br />
+
+							<label for="spnColorFoodGreen">Verde:</label><br />
+							<input type="range" name="spnColorFoodGreen" id="spnColorFoodGreen" value="0" min="0" max="255" step="1" />
+							<br />
+
+							<label for="spnColorFoodBlue">Azul:</label><br />
+							<input type="range" name="spnColorFoodBlue" id="spnColorFoodBlue" value="0" min="0" max="255" step="1" />
+						</div>
+					</li>
+
+					<li>
+						Aparición de comida:
+						<div class="choose-option">
+							<input type="radio" name="rdoAparicion[]" id="rdo1" value="0" checked="true" /> 
+							<label for="rdo1">Simultáneamente</label>
+
+							<input type="radio" name="rdoAparicion[]" id="rdo2" value="1" /> 
+							<label for="rdo2">Luego de haber comido</label>
+						</div>
+					</li>
+
+					<li>
+						Nivel:
+						<select name="cboLevelGame" id="cboLevelGame">
+							<option value="5">Fácil</option>
+							<option value="15">Medio</option>
+							<option value="30">Difícil</option>
+						</select>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	
 	<canvas id="cnvLienzo" height="300" width="500"></canvas>
 
 	<script type="text/javascript" src="js/funciones.js"></script>
